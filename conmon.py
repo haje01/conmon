@@ -1,5 +1,5 @@
-import os
 import logging
+import time
 from logging import config
 from datetime import datetime
 
@@ -8,9 +8,6 @@ import psutil
 import click
 
 exe_map = {}
-
-if not os.path.idfile('./logcfg.yml'):
-    print("Can not find 'logcfg.yml'.")
 
 with open('logcfg.yml') as f:
     data = yaml.load(f)
@@ -34,9 +31,10 @@ def log_process_info(p, con):
     name = p.name()
     username = p.username()
     ctime = datetime.fromtimestamp(p.create_time())
-    logging.info("pid: {}, ppid: {}, name: {}, pname: {}, username: {}, exe: {}, "
-                 "ctime: {}, connection: {}".format(pid, ppid, name, pname, username,
-                                                    exe, ctime, con))
+    logging.info("pid: {}, ppid: {}, name: {}, pname: {}, username: {}, exe:"
+                 " {}, ctime: {}, connection: {}".format(pid, ppid, name,
+                                                         pname, username, exe,
+                                                         ctime, con))
 
 
 def check_filter(con, lip, lport, rip, rport):
@@ -66,16 +64,18 @@ def check_filter(con, lip, lport, rip, rport):
 
 
 @click.command()
-@click.option("--lip", help="local ip")
-@click.option("--lport", type=int, help="local port")
-@click.option("--rip", help="remote ip")
-@click.option("--rport", type=int, help="remote port")
+@click.option("--lip", help="target local ip")
+@click.option("--lport", type=int, help="target local port")
+@click.option("--rip", help="target remote ip")
+@click.option("--rport", type=int, help="target remote port")
 def main(lip, lport, rip, rport):
     logging.critical("=========== Start connection monitoring ===========")
     logging.critical("lip: {}, lport: {}, rip: {}, rport: {}"
                      .format(lip, lport, rip, rport))
     while True:
         for con in psutil.net_connections():
+            if con.status != 'ESTABLISHED':
+                continue
             if not check_filter(con, lip, lport, rip, rport):
                 continue
             try:
@@ -83,6 +83,7 @@ def main(lip, lport, rip, rport):
                 log_process_info(pid, con)
             except psutil.NoSuchProcess:
                 pass
+        time.sleep(1)
 
 
 if __name__ == '__main__':

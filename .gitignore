@@ -1,0 +1,5 @@
+build/
+log.txt
+log.txt.*
+.ropeproject/
+.*.swp
