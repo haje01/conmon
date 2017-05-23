@@ -4,7 +4,7 @@
 
 ## 설치
 
-[릴리즈](https://github.com/haje01/conmon/releases) 에서 최신 배포본(.zip 파일)을 받고 압축 해제
+[릴리즈](https://github.com/haje01/conmon/releases)에서 최신 파일(conmon.zip)을 받고 압축 해제
 
 
 ## 도움말
