@@ -1,2 +1,2 @@
 # conmon
-Windows networ connection monitor
+Windows network connection monitor
