@@ -44,3 +44,9 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면:
     2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54403), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
     2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54400), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
     2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54401), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
+
+
+## 로그 설정
+
+필요에 따라 `logcfg.yml`을 편집하여 로그의 레벨과 로테이션 크기 및 갯수를 설정할 수 있다.
+
