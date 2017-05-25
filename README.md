@@ -1,15 +1,63 @@
 # conmon
 
-·ÎÄÃ ÇÁ·Î¼¼½ºÀÇ ¸ğµç Á¢¼Ó Á¤º¸¸¦ ¸ğ´ÏÅÍ¸µÇÑ´Ù.
+ë¡œì»¬ í”„ë¡œì„¸ìŠ¤ì˜ ëª¨ë“  ì ‘ì† ì •ë³´ë¥¼ ëª¨ë‹ˆí„°ë§í•œë‹¤.
 
-## ¼³Ä¡
-
-[¸±¸®Áî](https://github.com/haje01/conmon/releases)¿¡¼­ ÃÖ½Å ÆÄÀÏ(conmon.zip)À» ¹Ş°í ¾ĞÃà ÇØÁ¦
+[ë¦´ë¦¬ì¦ˆ](https://github.com/haje01/conmon/releases)ì—ì„œ ìµœì‹ ì˜ íŒŒì¼(conmon.zip)ì„ ë°›ê³ , ì••ì¶• í•´ì œ
 
 
-## µµ¿ò¸»
+## ì„¤ì • íŒŒì¼
 
-    conmon.exe --help
+ê¸°ë³¸ ì„¤ì • íŒŒì¼ `config.yml`ì„ í¸ì§‘í•˜ì—¬ ì‚¬ìš©í•œë‹¤. ì„¤ì • íŒŒì¼ì€ `conmon.py` ìŠ¤í¬ë¦½íŠ¸ íŒŒì¼ ë˜ëŠ” ì‹¤í–‰ íŒŒì¼ê³¼ ê°™ì€ í´ë”ì— ìˆì–´ì•¼ í•œë‹¤. ì„¤ì •ì€ í¬ê²Œ ë¡œê·¸ ì„¤ì •ê³¼ ì„œë¹„ìŠ¤ ì„¤ì •ìœ¼ë¡œ ë‚˜ë‰œë‹¤. ë¨¼ì € ë¡œê·¸ ì„¤ì •ì„ ë³´ì.
+
+### ë¡œê·¸ ì„¤ì •
+
+ì„¤ì • íŒŒì¼ì˜ `logger:` ì•„ë˜ì— ë¡œê·¸ ê´€ë ¨ ì„¤ì •ì´ ìˆë‹¤. ì´ê²ƒì€ íŒŒì´ì¬ logger ì„¤ì • í˜•ì‹ìœ¼ë¡œ, ì•„ë˜ì™€ ê°™ì€ ê¸°ë³¸ ê°’ì„ ê°€ì§„ë‹¤.
+
+    logger:
+        version: 1
+
+        formatters:
+            simpleFormater:
+                format: '%(asctime)s, %(message)s'
+                datefmt: '%Y-%m-%d %H:%M:%S'
+
+        handlers:
+            console:
+                class: logging.StreamHandler
+                formatter: simpleFormater
+                level: DEBUG
+                stream: ext://sys.stdout
+            file:
+                class : logging.handlers.RotatingFileHandler
+                formatter: simpleFormater
+                level: DEBUG
+                filename: C:\conmon\log.txt
+                maxBytes: 10485760
+                backupCount: 10
+
+        root:
+            level: DEBUG
+            handlers: [console, file]
+
+ì¼ë°˜ì ìœ¼ë¡œ ì•„ë˜ì™€ ê°™ì€ í•„ë“œë¥¼ í•„ìš”ì— ë§ê²Œ ìˆ˜ì •í•˜ë©´ ë  ê²ƒì´ë‹¤.
+
+`logger:handlers:console:level` ì½˜ì†” ë¡œê·¸ì˜ ë ˆë²¨
+
+`logger:handlers:file:level` íŒŒì¼ ë¡œê·¸ì˜ ë ˆë²¨
+
+`logger:handlers:file:filename` íŒŒì¼ ë¡œê·¸ì˜ ê²½ë¡œ. ì ˆëŒ€ ê²½ë¡œë¡œ ê¸°ì…í•œë‹¤.
+
+`logger:handlers:file:maxBytes` íŒŒì¼ ë¡œê·¸ì˜ í¬ê¸°. ì´ í¬ê¸° ì´ìƒì´ë©´ ë¡œí…Œì´ì…˜ ëœë‹¤.
+
+`logger:handlers:file:backupCount` íŒŒì¼ ë¡œê·¸ì˜ ë¡œí…Œì´ì…˜ ê°¯ìˆ˜.
+
+## ì½˜ì†” í…ŒìŠ¤íŠ¸
+
+ê°„ë‹¨íˆ ì½˜ì†” ëª¨ë“œë¡œ í…ŒìŠ¤íŠ¸í•´ë³¼ ìˆ˜ ìˆë‹¤.
+
+### ë„ì›€ë§
+
+    conmon.exe test --help
     Usage: conmon.exe [OPTIONS]
 
     Options:
@@ -19,34 +67,64 @@
       --rport INTEGER  target remote port
       --help           Show this message and exit.
 
+### ì‚¬ìš© ì˜ˆ
 
-## »ç¿ë ¿¹
+ë‹¤ìŒê³¼ ê°™ì´ ì‹¤í–‰í•˜ë©´ ë¡œì»¬ í”„ë¡œì„¸ìŠ¤ì˜ ëª¨ë“  ë„¤íŠ¸ì›Œí¬ ì ‘ì†ì„ ê¸°ë¡í•œë‹¤:
 
-´ÙÀ½°ú °°ÀÌ ½ÇÇàÇÏ¸é ·ÎÄÃ ÇÁ·Î¼¼½ºÀÇ ¸ğµç ³×Æ®¿öÅ© Á¢¼ÓÀ» ±â·ÏÇÑ´Ù:
+    common.exe test
 
-    common.exe
+IP ì£¼ì†Œì— ê´€ê³„ì—†ì´ ëª¨ë“  í¬íŠ¸ 3306ì— ì ‘ì†ì„ ëª¨ë‹ˆí„°ë§ í•˜ë ¤ë©´:
 
-IP ÁÖ¼Ò¿¡ °ü°è¾øÀÌ ¸ğµç Æ÷Æ® 3306¿¡ Á¢¼ÓÀ» ¸ğ´ÏÅÍ¸µ ÇÏ·Á¸é:
+    common.exe test --rport 3306
 
-    common.exe --rport 3306
+127.0.0.1ì˜ 3306ìœ¼ë¡œ ì ‘ê·¼í•˜ëŠ” ì ‘ì†ì„ ëª¨ë‹ˆí„°ë§ í•˜ë ¤ë©´:
 
-127.0.0.1ÀÇ 3306À¸·Î Á¢±ÙÇÏ´Â Á¢¼ÓÀ» ¸ğ´ÏÅÍ¸µ ÇÏ·Á¸é:
-
-    common.exe --rip 127.0.0.1 --rport 3306
-
-## ·Î±× ¿¹
-
-Á¢¼Ó ±â·ÏÀº `log.txt` ÆÄÀÏ·Î ³²°í, ÁöÁ¤µÈ Å©±â(±âº» 10MB) ÀÌ»óÀÌ µÇ¸é ·ÎÅ×ÀÌ¼ÇµÈ´Ù. ÃÖ´ë 10°³±îÁö ·Î±×ÆÄÀÏÀÌ ³²´Â´Ù. ·Î±× ÆÄÀÏ ³»¿ëÀº ´ÙÀ½°ú °°´Ù:
-
-    2017-05-23 17:03:42 - CRITICAL: =========== Start connection monitoring ===========
-    2017-05-23 17:03:42 - CRITICAL: lip: None, lport: None, rip: None, rport: 8000
-    2017-05-23 17:03:45 - WARNING: First connection from C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
-    2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54403), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
-    2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54400), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
-    2017-05-23 17:03:45 - INFO: pid: 8520, ppid: 4924, name: chrome.exe, pname: chrome.exe, username: WEBZEN\haje01, exe: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, ctime: 2017-05-23 16:56:51, connection: sconn(fd=-1, family=2, type=1, laddr=('127.0.0.1', 54401), raddr=('127.0.0.1', 8000), status='ESTABLISHED', pid=8520)
+    common.exe test --rip 127.0.0.1 --rport 3306
 
 
-## ·Î±× ¼³Á¤
+## ì„œë¹„ìŠ¤ë¡œ ì´ìš©í•˜ê¸°
 
-ÇÊ¿ä¿¡ µû¶ó `logcfg.yml`À» ÆíÁıÇÏ¿© ·Î±× ·¹º§, ·ÎÅ×ÀÌ¼Ç Å©±â ¹× °¹¼ö¸¦ ¼³Á¤ÇÒ ¼ö ÀÖ´Ù.
+### ì„œë¹„ìŠ¤ ì„¤ì •
 
+`config.yml` íŒŒì¼ì˜  `service:` ì•„ë˜ì— ë‹¤ìŒê³¼ ê°™ì€ í•„ë“œë¥¼ ì„¤ì •í•  ìˆ˜ ìˆë‹¤. í•„ìš”í•œ í•„ë“œë¥¼ uncomment í›„ ê¸°ì…í•˜ì.
+
+    service:
+        # lip: target local ip
+        # lport: target local port
+        # rip: target remote ip
+        # rport: target remote port
+
+
+### ìœˆë„ìš° ì„œë¹„ìŠ¤
+
+ìë™ ì‹œì‘ ì„œë¹„ìŠ¤ë¡œ ì„¤ì¹˜
+
+    conmon.exe --startup=auto install
+
+ì„œë¹„ìŠ¤ ì‹œì‘
+
+    conmon.exe start
+
+ì„œë¹„ìŠ¤ ì •ì§€
+
+    conmon.exe stop
+
+ì„œë¹„ìŠ¤ ì œê±°
+
+    conmon.exe remove
+
+
+## ë¡œê·¸ ì˜ˆ
+
+ì ‘ì† ê¸°ë¡ì€ `log.txt` íŒŒì¼ë¡œ ë‚¨ê³ , ì§€ì •ëœ í¬ê¸°(ê¸°ë³¸ 10MB) ì´ìƒì´ ë˜ë©´ ë¡œí…Œì´ì…˜ëœë‹¤. ìµœëŒ€ 10ê°œê¹Œì§€ ë¡œê·¸íŒŒì¼ì´ ë‚¨ëŠ”ë‹¤. ë¡œê·¸ëŠ” CSV í˜•ì‹ìœ¼ë¡œ ë‹¤ìŒê³¼ ê°™ì´ ë‚¨ëŠ”ë‹¤:
+
+    2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:45, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:46, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+
+
+## ë³€ê²½ ì´ë ¥
+
+v0.1.0 - ìµœì´ˆ ë²„ì „
+v0.1.1 - ìœˆë„ìš° ì„œë¹„ìŠ¤í™”, CSV í˜•ì‹ ë¡œê·¸
