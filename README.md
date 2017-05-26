@@ -1,6 +1,6 @@
 # conmon
 
-로컬 프로세스의 네트워크 접속 정보를 모니터링한다.
+네트워크 패킷을 모니터링한다.
 
 [릴리즈](https://github.com/haje01/conmon/releases)에서 최신의 배포 파일(conmon.zip)을 받고, 압축 해제하여 사용한다.
 
@@ -18,7 +18,7 @@
 
         formatters:
             simpleFormater:
-                format: '%(asctime)s, %(message)s'
+                format: '%(asctime)s%(message)s'
                 datefmt: '%Y-%m-%d %H:%M:%S'
 
         handlers:
@@ -60,45 +60,40 @@
 
 ### 사용 예
 
-다음과 같이 실행하면 로컬 프로세스의 모든 네트워크 접속을 기록한다:
+다음과 같이 실행하면 호스트 127.0.0.1에 대한 로컬 프로세스의 모든 네트워크 접속을 기록한다:
 
-    common.exe test
+    common.exe test 127.0.0.1
 
-IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면:
+포트 3306에 접속을 모니터링 하려면:
 
-    common.exe test --rport 3306
+    common.exe test 127.0.0.1 --rport 3306
 
-127.0.0.1의 3306으로 접근하는 접속을 모니터링 하려면:
-
-    common.exe test --rip 127.0.0.1 --rport 3306
-
-
-### 도움말
+### 도움말 보기
 
     conmon.exe test --help
-    Usage: conmon.exe [OPTIONS]
+    Usage: conmon.py test [OPTIONS] HOSTIP
 
     Options:
-      --lip TEXT       target local ip
-      --lport INTEGER  target local port
-      --rip TEXT       target remote ip
-      --rport INTEGER  target remote port
-      --help           Show this message and exit.
+    --hport INTEGER  target host port
+    --sip TEXT       target source ip
+    --sport INTEGER  target source port
+    --help           Show this message and exit.
 
 
 ## 로그 예
 
-설정 파일에서 지정한 로그 파일에 접속 기록이 CSV 형식으로 남는다. 각 필드의 의미는 다음과 같다.
+설정 파일에서 지정한 로그 파일에 접속 기록이 TSV 형식으로 남는다. 각 필드의 의미는 다음과 같다.
 
-    일시, 프로세스ID, 부모 프로세스ID, 실행파일 이름, 부모 실행파일 이름, 유저 이름, 실행파일 경로, 프로세스 생성 시간, 소스 IP, 소스 PORT, 목적지 IP, 목적지 PORT
+    일시, 소스 IP, 소스 PORT, 목적지 IP, 목적지 PORT, 실행파일 이름, 실핼파일 경로, 부모 실행파일 이름, 유저 이름, 프로세스 생성 시간, 메시지 내용
 
 아래는 8000번 포트 접속 모니터링의 샘플 로그이다.
-
-    2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:45, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:46, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-
+2017-05-26 16:20:54     127.0.0.1       62049   127.0.0.1       8000    chrome.exe      C:\Program F
+iles (x86)\Google\Chrome\Application\chrome.exe explorer.exe    GROUP\haje01   2017-05-26 10:25:40
+GET / HTTP/1.1\r\nHost: localhost:8000\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgr
+ade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36
+(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,ap
+plication/xml;q=0.9,image/webp,*/*;q=0.8\r\nAccept-Encoding: gzip, deflate, sdch, br\r\nAccept-Langu
+age: ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4\r\n\r\n
 
 ## 서비스로 이용하기
 
@@ -107,10 +102,11 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 설정 파일의 `service:` 아래에 다음과 같은 필드를 설정할 수 있다. 필요한 필드의 주석을 제거하고 기입하자.
 
     service:
+        hostip: target host ip (required)
+        # hport: target host port
         # lip: target local ip
         # lport: target local port
-        # rip: target remote ip
-        # rport: target remote port
+        # ifip: target interface ip, default: first interface ip
 
 
 ### 서비스 관리
@@ -133,6 +129,8 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 
 
 ## 변경 이력
+
+- v0.1.2 - 패킷 캡쳐, TSV 형식 로그
 
 - v0.1.1 - 윈도우 서비스화, CSV 형식 로그
 

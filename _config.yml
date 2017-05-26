@@ -3,7 +3,7 @@ logger:
 
     formatters:
         simpleFormater:
-            format: '%(asctime)s, %(message)s'
+            format: '%(asctime)s\t%(message)s'
             datefmt: '%Y-%m-%d %H:%M:%S'
 
     handlers:
@@ -25,7 +25,7 @@ logger:
         handlers: [console, file]
 
 service:
-    # lip: target local ip
-    # lport: target local port
-    # rip: target remote ip
-    # rport: target remort port
+    # hostip: target host ip (required)
+    # hport: target host port
+    # sip: target local ip
+    # sport: target local port

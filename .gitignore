@@ -3,3 +3,7 @@ log.txt
 log.txt.*
 .ropeproject/
 .*.swp
+dist/
+__pycache__/
+*.spec
+config.yml

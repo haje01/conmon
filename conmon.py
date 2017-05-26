@@ -1,22 +1,105 @@
 import os
 import sys
-import time
 import logging
 from logging import config as logconfig
 from datetime import datetime
+import socket
+import struct
 
 import yaml
 import psutil
 import servicemanager
-import sys
 import win32event
 import win32service
 import win32serviceutil
 import click
+import errno
+import netifaces
 
 
 SLEEP_SEC = 1
 CFG_FNAME = 'config.yml'
+RECV_SIZE = 65565
+
+
+def get_first_iface_addr():
+    ifs = netifaces.interfaces()
+    return netifaces.ifaddresses(ifs[0])[2][0]['addr']
+
+
+def prepare_sniff(hostip):
+    logging.critical("\t# Target host IP: {}".format(hostip))
+    # create an INET, STREAMing socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_IP)
+        # s.setblocking(0)
+        s.bind((hostip, 0))
+        s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+        s.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
+    except socket.error, msg:
+        logging.error('# Socket could not be created. Error Code : ' +
+                      str(msg[0]) + ' Message ' + msg[1])
+        sys.exit()
+    return s
+
+
+def sniff(s, hostip, hport, sip, sport):
+    if False:
+        try:
+            packet = s.recv(RECV_SIZE)
+        except socket.error, e:
+            err = e.args[0]
+            if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+                pass
+            else:
+                logging.error("\t# Recv error: {}".format(e))
+            return
+    else:
+        packet = s.recvfrom(RECV_SIZE)
+        packet = packet[0]
+
+    ip_header = packet[0:20]
+    iph = struct.unpack('!BBHHHBBH4s4s', ip_header)
+
+    version_ihl = iph[0]
+    ihl = version_ihl & 0xF
+
+    iph_length = ihl * 4
+
+    protocol = iph[6]
+    # TCP only
+    if protocol != 6:
+        return
+
+    s_addr = socket.inet_ntoa(iph[8])
+    d_addr = socket.inet_ntoa(iph[9])
+    # filter by ip
+    if sip is not None and s_addr != sip:
+        return
+    if d_addr != hostip:
+        return
+
+    tcp_header = packet[iph_length:iph_length+20]
+
+    tcph = struct.unpack('!HHLLBBHHH', tcp_header)
+
+    source_port = tcph[0]
+    dest_port = tcph[1]
+
+    # filter by port
+    if sport is not None and source_port != sport:
+        return
+    if hport is not None and dest_port != hport:
+        return
+
+    doff_reserved = tcph[4]
+    tcph_length = doff_reserved >> 4
+
+    h_size = iph_length + tcph_length * 4
+    data_size = len(packet) - h_size
+    data = packet[h_size:]
+
+    return d_addr, dest_port, s_addr, source_port, data, data_size
 
 
 def get_cfg_path():
@@ -29,7 +112,7 @@ def get_cfg_path():
 
 def load_config():
     cfg_path = get_cfg_path()
-    lip = lport = rip = rport = None
+    sip = sport = hostip = hport = None
     with open(cfg_path) as f:
         data = yaml.load(f)
         if 'logger' in data:
@@ -37,84 +120,14 @@ def load_config():
         if 'service' in data:
             adata = data['service']
             if adata is not None:
-                lip = adata.get('lip')
-                lport = adata.get('lport')
-                rip = adata.get('rip')
-                rport = adata.get('rport')
-    return lip, lport, rip, rport
+                hostip = adata.get('hostip')
+                hport = adata.get('hport')
+                sip = adata.get('sip')
+                sport = adata.get('sport')
+    return hostip, hport, sip, sport
 
 
-def log_process_info(p, con, connect_map):
-    pid = p.pid
-    try:
-        exe = p.exe()
-    except:
-        # logging.debug("Fail to get executable for pid: {}".format(pid))
-        return
-
-    ppid = p.ppid()
-    pname = psutil.Process(con.pid).name() if ppid is not None else None
-    name = p.name()
-    username = p.username()
-    ctime = datetime.fromtimestamp(p.create_time())
-
-    lip, lport, rip, rport = None, None, None, None
-    if len(con.laddr) == 2:
-        lip, lport = con.laddr
-    if len(con.raddr) == 2:
-        rip, rport = con.raddr
-
-    data = dict(pid=pid, ppid=ppid, name=name, pname=pname, username=username,
-                exe=exe, ctime=ctime, lip=lip, lport=lport, rip=rip,
-                rport=rport)
-    key = (exe, pid, ppid)
-    if key not in connect_map:
-        connect_map[key] = True
-        logging.info("{pid}, {ppid}, {name}, {pname}, {username}, {exe}, "
-                     "{ctime}, {lip}, {lport}, {rip}, {rport}".format(**data))
-
-
-def check_filter(con, lip, lport, rip, rport):
-    # check source condition
-    if lip is not None or lport is not None:
-        if len(con.laddr) == 0:
-            return False
-    if lip is not None:
-        if con.laddr[0] != lip:
-            return False
-    if lport is not None:
-        if con.laddr[1] != lport:
-            return False
-
-    # check dest condition
-    if rip is not None or rport is not None:
-        if len(con.raddr) == 0:
-            return False
-    if rip is not None:
-        if con.raddr[0] != rip:
-            return False
-    if rport is not None:
-        if con.raddr[1] != rport:
-            return False
-
-    return True
-
-
-lip, lport, rip, rport = load_config()
-
-
-def main(lip, lport, rip, rport):
-    connect_map = {}
-    for con in psutil.net_connections():
-        if con.status != 'ESTABLISHED':
-            continue
-        if not check_filter(con, lip, lport, rip, rport):
-            continue
-        try:
-            pid = psutil.Process(con.pid)
-            log_process_info(pid, con, connect_map)
-        except psutil.NoSuchProcess:
-            pass
+hostip, hport, sip, sport = load_config()
 
 
 class ConmonService(win32serviceutil.ServiceFramework):
@@ -135,12 +148,17 @@ class ConmonService(win32serviceutil.ServiceFramework):
         servicemanager.LogInfoMsg("Service is starting.")
         rc = None
         log_header()
+        s = prepare_sniff(hostip)
         while rc != win32event.WAIT_OBJECT_0:
-            main(lip, lport, rip, rport)
-            rc = win32event.WaitForSingleObject(self.hWaitStop, SLEEP_SEC *
-                                                1000)
+            try:
+                main(s, hostip, hport, sip, sport)
+            except Exception, e:
+                logging.error("Service error: {}".format(e))
+                break
+            rc = win32event.WaitForSingleObject(self.hWaitStop, 1)
         log_footer()
         servicemanager.LogInfoMsg("Service is finished.")
+
 
 @click.group()
 def test_dummy():
@@ -148,26 +166,78 @@ def test_dummy():
 
 
 def log_header():
-    logging.critical("=========== Start connection monitoring ===========")
+    logging.critical("\t# =========== Start connection monitoring ===========")
     cfg_path = get_cfg_path()
-    logging.critical("Config file: '{}', lip: {}, lport: {}, rip: {}, "
-                     "rport: {}".format(cfg_path, lip, lport, rip, rport))
+    logging.critical("\t# Config file: '{}', hostip: {}, hport: {}, sip: {},"
+                     " sport: {}".format(cfg_path, hostip, hport, sip, sport))
 
 
 def log_footer():
-    logging.critical("=========== Finish connection monitoring ===========")
+    logging.critical("\t# =========== Finish connection monitoring ===========")
+
+
+def local_pinfo_by_addr(sip, sport):
+    for con in psutil.net_connections():
+        if con.status != 'ESTABLISHED':
+            continue
+
+        pid = con.pid
+        try:
+            proc = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            # logging.debug("\t# No such process: {}".format(pid))
+            continue
+
+        try:
+            exe = proc.exe()
+        except:
+            # logging.debug("\t# Fail to get executable for pid: {}".format(pid))
+            continue
+
+        ppid = proc.ppid()
+        try:
+            pname = psutil.Process(ppid).name() if ppid is not None else None
+        except psutil.NoSuchProcess:
+            pname = "_destroyed_"
+        name = proc.name()
+        username = proc.username()
+        ctime = datetime.fromtimestamp(proc.create_time())
+
+        _sip, _sport = None, None
+        if len(con.laddr) == 2:
+            _sip, _sport = con.laddr
+        if _sip == sip and _sport == sport:
+            return name, pname, exe, username, ctime
+
+
+def main(s, hostip, hport, sip, sport):
+    res = sniff(s, hostip, hport, sip, sport)
+    if res is None:
+        return
+    _hostip, _hport, _sip, _sport, data, datasize = res
+    if datasize <= 1:
+        return
+    pinfo = local_pinfo_by_addr(_sip, _sport)
+    if pinfo is not None:
+        name, pname, exe, username, ctime = pinfo
+    else:
+        name, pname, exe, username, ctime = \
+            None, None, None, None, None
+    logging.info("\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".\
+                    format(_sip, _sport, _hostip, _hport, name, exe, pname,
+                           username, ctime, data.encode('string-escape')))
 
 
 @click.command()
-@click.option("--lip", help="target local ip")
-@click.option("--lport", type=int, help="target local port")
-@click.option("--rip", help="target remote ip")
-@click.option("--rport", type=int, help="target remote port")
-def test(lip, lport, rip, rport):
+@click.argument("hostip")
+@click.option("--hport", type=int, help="target host port")
+@click.option("--sip", help="target source ip")
+@click.option("--sport", type=int, help="target source port")
+def test(hostip, hport, sip, sport):
     log_header()
+    s = prepare_sniff(hostip)
     while True:
-        main(lip, lport, rip, rport)
-        time.sleep(SLEEP_SEC)
+        main(s, hostip, hport, sip, sport)
 
 test_dummy.add_command(test)
 
