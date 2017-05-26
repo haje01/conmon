@@ -87,13 +87,14 @@
     일시, 소스 IP, 소스 PORT, 목적지 IP, 목적지 PORT, 실행파일 이름, 실핼파일 경로, 부모 실행파일 이름, 유저 이름, 프로세스 생성 시간, 메시지 내용
 
 아래는 8000번 포트 접속 모니터링의 샘플 로그이다.
-2017-05-26 16:20:54     127.0.0.1       62049   127.0.0.1       8000    chrome.exe      C:\Program F
-iles (x86)\Google\Chrome\Application\chrome.exe explorer.exe    GROUP\haje01   2017-05-26 10:25:40
-GET / HTTP/1.1\r\nHost: localhost:8000\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgr
-ade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36
-(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,ap
-plication/xml;q=0.9,image/webp,*/*;q=0.8\r\nAccept-Encoding: gzip, deflate, sdch, br\r\nAccept-Langu
-age: ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4\r\n\r\n
+
+    2017-05-26 16:20:54     127.0.0.1       62049   127.0.0.1       8000    chrome.exe      C:\Program F
+    iles (x86)\Google\Chrome\Application\chrome.exe explorer.exe    GROUP\haje01   2017-05-26 10:25:40
+    GET / HTTP/1.1\r\nHost: localhost:8000\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgr
+    ade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36
+    (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,ap
+    plication/xml;q=0.9,image/webp,*/*;q=0.8\r\nAccept-Encoding: gzip, deflate, sdch, br\r\nAccept-Langu
+    age: ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4\r\n\r\n
 
 ## 서비스로 이용하기
 
