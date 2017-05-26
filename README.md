@@ -92,7 +92,7 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 
     일시, 프로세스ID, 부모 프로세스ID, 실행파일 이름, 부모 실행파일 이름, 유저 이름, 실행파일 경로, 프로세스 생성 시간, 소스 IP, 소스 PORT, 목적지 IP, 목적지 PORT
 
-아래는 샘플 로그이다.
+아래는 8000번 포트 접속 모니터링의 샘플 로그이다.
 
     2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
     2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
