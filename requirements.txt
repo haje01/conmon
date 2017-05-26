@@ -1,0 +1,4 @@
+pyyaml
+psutil
+click
+pywin32
