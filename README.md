@@ -58,18 +58,6 @@
 
 콘솔 모드로 간단히 테스트해볼 수 있다.
 
-### 도움말
-
-    conmon.exe test --help
-    Usage: conmon.exe [OPTIONS]
-
-    Options:
-      --lip TEXT       target local ip
-      --lport INTEGER  target local port
-      --rip TEXT       target remote ip
-      --rport INTEGER  target remote port
-      --help           Show this message and exit.
-
 ### 사용 예
 
 다음과 같이 실행하면 로컬 프로세스의 모든 네트워크 접속을 기록한다:
@@ -83,6 +71,19 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 127.0.0.1의 3306으로 접근하는 접속을 모니터링 하려면:
 
     common.exe test --rip 127.0.0.1 --rport 3306
+
+
+### 도움말
+
+    conmon.exe test --help
+    Usage: conmon.exe [OPTIONS]
+
+    Options:
+      --lip TEXT       target local ip
+      --lport INTEGER  target local port
+      --rip TEXT       target remote ip
+      --rport INTEGER  target remote port
+      --help           Show this message and exit.
 
 
 ## 로그 예
