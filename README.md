@@ -1,6 +1,6 @@
 # conmon
 
-로컬 프로세스의 모든 접속 정보를 모니터링한다.
+로컬 프로세스의 네트워크 접속 정보를 모니터링한다.
 
 [릴리즈](https://github.com/haje01/conmon/releases)에서 최신의 파일(conmon.zip)을 받고, 압축 해제하여 사용한다.
 
