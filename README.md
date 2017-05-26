@@ -94,10 +94,10 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 
 아래는 샘플 로그이다.
 
-    2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:45, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:46, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:45, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:46, 7940, 4924, chrome.exe, chrome.exe, GROUP\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
 
 
 ## 서비스로 이용하기
