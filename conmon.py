@@ -234,6 +234,11 @@ def main(s, hostip, hport, sip, sport):
 @click.option("--sip", help="target source ip")
 @click.option("--sport", type=int, help="target source port")
 def test(hostip, hport, sip, sport):
+    g = globals()
+    g['hostip'] = hostip
+    g['hport'] = hport
+    g['sip'] = sip
+    g['sport'] = sport
     log_header()
     s = prepare_sniff(hostip)
     while True:
