@@ -155,7 +155,7 @@ class ConmonService(win32serviceutil.ServiceFramework):
             except Exception, e:
                 logging.error("Service error: {}".format(e))
                 break
-            rc = win32event.WaitForSingleObject(self.hWaitStop, 1)
+            rc = win32event.WaitForSingleObject(self.hWaitStop, 0)
         log_footer()
         servicemanager.LogInfoMsg("Service is finished.")
 
@@ -182,32 +182,38 @@ def local_pinfo_by_addr(sip, sport):
             continue
 
         pid = con.pid
+
         try:
             proc = psutil.Process(pid)
         except psutil.NoSuchProcess:
-            # logging.debug("\t# No such process: {}".format(pid))
+            logging.debug("\t# No such process: {}".format(pid))
+            continue
+
+        try:
+            name = proc.name()
+        except:
+            logging.debug("\t# Fail to get process name: {}".format(pid))
             continue
 
         try:
             exe = proc.exe()
         except:
-            # logging.debug("\t# Fail to get executable for pid: {}".format(pid))
-            continue
+            logging.debug("\t# Fail to get executable for pid: {}".format(pid))
+            exe = None
 
         ppid = proc.ppid()
         try:
             pname = psutil.Process(ppid).name() if ppid is not None else None
         except psutil.NoSuchProcess:
             pname = "_destroyed_"
-        name = proc.name()
-        username = proc.username()
-        ctime = datetime.fromtimestamp(proc.create_time())
 
-        _sip, _sport = None, None
-        if len(con.laddr) == 2:
-            _sip, _sport = con.laddr
-        if _sip == sip and _sport == sport:
-            return name, pname, exe, username, ctime
+        try:
+            username = proc.username()
+        except psutil.AccessDenied:
+            username = "AccessDenied"
+
+        ctime = datetime.fromtimestamp(proc.create_time())
+        return name, pname, exe, username, ctime
 
 
 def main(s, hostip, hport, sip, sport):
