@@ -83,8 +83,8 @@ def log_process_info(p, con, connect_map):
     key = (exe, pid, ppid)
     if key not in connect_map:
         connect_map[key] = True
-        logging.info("{pid}\t {ppid}\t {name}\t {pname}\t {username}\t {exe}"
-                     "\t {ctime}\t {lip}\t {lport}\t {rip}\t {rport}".
+        logging.info("\t{pid}\t{ppid}\t{name}\t{pname}\t{username}\t{exe}"
+                     "\t{ctime}\t{lip}\t{lport}\t{rip}\t{rport}".
                      format(**data))
 
 
