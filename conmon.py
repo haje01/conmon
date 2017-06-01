@@ -8,7 +8,6 @@ from datetime import datetime
 import yaml
 import psutil
 import servicemanager
-import sys
 import win32event
 import win32service
 import win32serviceutil
@@ -46,16 +45,30 @@ def load_config():
 
 def log_process_info(p, con, connect_map):
     pid = p.pid
+
+    try:
+        name = p.name()
+    except:
+        logging.debug("Fail to get process name: {}".format(pid))
+        return
+
     try:
         exe = p.exe()
     except:
         # logging.debug("Fail to get executable for pid: {}".format(pid))
-        return
+        exe = None
 
     ppid = p.ppid()
-    pname = psutil.Process(con.pid).name() if ppid is not None else None
-    name = p.name()
-    username = p.username()
+    try:
+        pname = psutil.Process(ppid).name() if ppid is not None else None
+    except psutil.NoSuchProcess:
+        pname = "_Destroyed_"
+
+    try:
+        username = p.username()
+    except psutil.AccessDenied:
+        username = "_AccessDenied_"
+
     ctime = datetime.fromtimestamp(p.create_time())
 
     lip, lport, rip, rport = None, None, None, None
@@ -70,8 +83,9 @@ def log_process_info(p, con, connect_map):
     key = (exe, pid, ppid)
     if key not in connect_map:
         connect_map[key] = True
-        logging.info("{pid}, {ppid}, {name}, {pname}, {username}, {exe}, "
-                     "{ctime}, {lip}, {lport}, {rip}, {rport}".format(**data))
+        logging.info("{pid}\t {ppid}\t {name}\t {pname}\t {username}\t {exe}"
+                     "\t {ctime}\t {lip}\t {lport}\t {rip}\t {rport}".
+                     format(**data))
 
 
 def check_filter(con, lip, lport, rip, rport):
@@ -141,6 +155,7 @@ class ConmonService(win32serviceutil.ServiceFramework):
                                                 1000)
         log_footer()
         servicemanager.LogInfoMsg("Service is finished.")
+
 
 @click.group()
 def test_dummy():

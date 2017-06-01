@@ -116,15 +116,18 @@ IP 주소에 관계없이 모든 포트 3306에 접속을 모니터링 하려면
 
 ## 로그 예
 
-접속 기록은 `log.txt` 파일로 남고, 지정된 크기(기본 10MB) 이상이 되면 로테이션된다. 최대 10개까지 로그파일이 남는다. 로그는 CSV 형식으로 다음과 같이 남는다:
+접속 기록은 `log.txt` 파일로 남고, 지정된 크기(기본 10MB) 이상이 되면 로테이션된다. 최대 10개까지 로그파일이 남는다. 로그는 TSV 형식으로 다음과 같이 남는다:
 
-    2017-05-25 14:22:43, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:44, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:45, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
-    2017-05-25 14:22:46, 7940, 4924, chrome.exe, chrome.exe, WEBZEN\haje01, C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, 2017-05-25 13:58:07, 127.0.0.1, 56331, 127.0.0.1, 8000
+    2017-05-25 14:22:43     7940     4924     chrome.exe     chrome.exe     WEBZEN\haje01     C:\Program Files (x86)\Google\Chrome\Application\chrome.exe     2017-05-25 13:58:07     127.0.0.1     56331     127.0.0.1     8000
+    2017-05-25 14:22:44     7940     4924     chrome.exe     chrome.exe     WEBZEN\haje01     C:\Program Files (x86)\Google\Chrome\Application\chrome.exe     2017-05-25 13:58:07     127.0.0.1     56331     127.0.0.1     8000
+    2017-05-25 14:22:45     7940     4924     chrome.exe     chrome.exe     WEBZEN\haje01     C:\Program Files (x86)\Google\Chrome\Application\chrome.exe     2017-05-25 13:58:07     127.0.0.1     56331     127.0.0.1     8000
+    2017-05-25 14:22:46     7940     4924     chrome.exe     chrome.exe     WEBZEN\haje01     C:\Program Files (x86)\Google\Chrome\Application\chrome.exe     2017-05-25 13:58:07     127.0.0.1     56331     127.0.0.1     8000
 
 
 ## 변경 이력
 
-v0.1.0 - 최초 버전
-v0.1.1 - 윈도우 서비스화, CSV 형식 로그
+- v0.1.1 - 버그 수정, TSV 형식 로그
+
+- v0.1.1 - 윈도우 서비스화, CSV 형식 로그
+
+- v0.1.0 - 최초 버전
