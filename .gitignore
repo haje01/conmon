@@ -1,5 +1,8 @@
 build/
+dist/
 log.txt
 log.txt.*
 .ropeproject/
-.*.swp
+*.swp
+*.*~
+__pycache__

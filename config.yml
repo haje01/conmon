@@ -3,7 +3,7 @@ logger:
 
     formatters:
         simpleFormater:
-            format: '%(asctime)s, %(message)s'
+            format: '%(asctime)s%(message)s'
             datefmt: '%Y-%m-%d %H:%M:%S'
 
     handlers:
@@ -16,7 +16,7 @@ logger:
             class : logging.handlers.RotatingFileHandler
             formatter: simpleFormater
             level: DEBUG
-            filename: C:\conmon\log.txt
+            filename: E:\works\\conmon\dist\log.txt
             maxBytes: 10485760
             backupCount: 10
 

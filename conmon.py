@@ -83,9 +83,8 @@ def log_process_info(p, con, connect_map):
     key = (exe, pid, ppid)
     if key not in connect_map:
         connect_map[key] = True
-        logging.info("\t{pid}\t{ppid}\t{name}\t{pname}\t{username}\t{exe}"
-                     "\t{ctime}\t{lip}\t{lport}\t{rip}\t{rport}".
-                     format(**data))
+        logging.info('\t{lip}\t{lport}\t{rip}\t{rport}\t{name}\t{exe}\t'
+                     '{pname}\t{username}\t{ctime}\t""'.format(**data))
 
 
 def check_filter(con, lip, lport, rip, rport):
@@ -119,16 +118,19 @@ lip, lport, rip, rport = load_config()
 
 def main(lip, lport, rip, rport):
     connect_map = {}
-    for con in psutil.net_connections():
-        if con.status != 'ESTABLISHED':
-            continue
-        if not check_filter(con, lip, lport, rip, rport):
-            continue
-        try:
-            pid = psutil.Process(con.pid)
-            log_process_info(pid, con, connect_map)
-        except psutil.NoSuchProcess:
-            pass
+    try:
+        for con in psutil.net_connections():
+            if con.status != 'ESTABLISHED':
+                continue
+            if not check_filter(con, lip, lport, rip, rport):
+                continue
+            try:
+                pid = psutil.Process(con.pid)
+                log_process_info(pid, con, connect_map)
+            except psutil.NoSuchProcess:
+                pass
+    except WindowsError as e:
+        logging.error("Fail to get connection!: {}".format(e))
 
 
 class ConmonService(win32serviceutil.ServiceFramework):
